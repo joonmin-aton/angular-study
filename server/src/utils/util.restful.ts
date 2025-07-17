@@ -10,7 +10,7 @@ export default class RestfulUtil {
 
   register = (router: Router, url: string) => {
     // 리스트 조회
-    router.get(`${url}/`, async (req, res) => {
+    router.get(`${url}`, async (req, res) => {
       try {
         const list = await this.schema.find();
         res.json(list);
@@ -31,9 +31,10 @@ export default class RestfulUtil {
     });
 
     // INSERT
-    router.post(`${url}/`, async (req, res) => {
+    router.post(`${url}`, async (req, res) => {
       try {
-        const existing = await this.schema.findOne({ name: req.body.name });
+        console.log(req);
+        const existing = await this.schema.findOne({ email: req.body.email });
         if (existing) {
           return res.status(400).json({ message: 'Product already exists' });
         }

@@ -2,17 +2,16 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import session from 'express-session';
+import mongoose from 'mongoose';
 import passport from 'passport';
 import PassportConfig from './config/config.passport.ts';
-import AuthService from './service/service.auth.ts';
-import BlogService from './service/service.blog.ts';
-import mongoose from 'mongoose';
 import router from './routes/routes.api.ts';
 
 const app = express();
 const port = 3000;
 
 app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'secretJMPark', resave: true, saveUninitialized: true }));
 
