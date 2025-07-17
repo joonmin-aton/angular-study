@@ -2,9 +2,10 @@ import bcrypt from 'bcryptjs';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 
+// username, password로 로그인하는 정통적인 방법
 const LocalStrategy = passportLocal.Strategy;
 
-const PassportConfig = () => {
+export default () => {
     passport.use(new LocalStrategy(
         {
             usernameField: 'email',
@@ -45,7 +46,4 @@ const PassportConfig = () => {
             done(e);
         }
     });
-
 }
-
-export default PassportConfig;

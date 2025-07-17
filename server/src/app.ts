@@ -3,9 +3,10 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
-import PassportConfig from './config/config.passport';
-import AuthService from './service/service.auth';
-import BlogService from './service/service.blog';
+import PassportConfig from './config/config.passport.ts';
+import AuthService from './service/service.auth.ts';
+import BlogService from './service/service.blog.ts';
+import mongoose from 'mongoose';
 
 const app = express();
 const port = 3000;
@@ -19,6 +20,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 PassportConfig();
+
+
+// Mongoose 설정
+mongoose
+    .connect("mongodb://localhost:27017/study")
+    .then(() => {
+        console.log("Connected");
+    })
 
 
 app.get('/', (req, res) => {
