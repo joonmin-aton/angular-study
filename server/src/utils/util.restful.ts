@@ -36,14 +36,13 @@ export default class RestfulUtil {
     // INSERT
     router.post(`${url}`, async (req, res) => {
       try {
-        console.log(req);
-        const existing = await this.schema.findOne({ email: req.body.email });
-        if (existing) {
+        const exist = await this.schema.findOne({ email: req.body.email });
+        if (exist) {
           return res.status(400).json({ message: `${this.name} already exists` });
         }
-        const product = new this.schema(req.body);
-        const saved = await product.save();
-        res.status(201).json(saved);
+        const newOne = new this.schema(req.body);
+        const saved = await newOne.save();
+        res.status(200).json(saved);
       } catch (err) {
         res.status(400).json({ message: err });
       }
