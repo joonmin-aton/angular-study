@@ -9,7 +9,7 @@ const router = express.Router();
 
 // CRUD
 const UserResource = new RestfulUtil("User", userSchema);
-UserResource.register(router, '/user');
+UserResource.register(router, '/users');
 
 const PostResource = new RestfulUtil("Post", postSchema);
 PostResource.register(router, '/posts');
