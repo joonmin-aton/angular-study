@@ -1,9 +1,8 @@
 import bcrypt from 'bcryptjs';
 import passport from 'passport';
+import passportJwt, { ExtractJwt } from 'passport-jwt';
 import passportLocal from 'passport-local';
 import userSchema from "../schema/schema.user.ts";
-import jwt from 'jsonwebtoken';
-import passportJwt, { ExtractJwt } from 'passport-jwt';
 
 // username, password로 로그인하는 정통적인 방법
 const LocalStrategy = passportLocal.Strategy;
@@ -12,6 +11,14 @@ const JwtStrategy = passportJwt.Strategy;
 export const JWT_SECRET_KEY = "secretJMPark";
 
 export default () => {
+	passport.serializeUser((user: any, done) => {
+    done(null, user);
+  });
+
+  passport.deserializeUser((user: any, done) => {
+    done(null, user);
+  });
+
 	passport.use(new LocalStrategy(
 		{
 			usernameField: 'email',
@@ -26,11 +33,10 @@ export default () => {
 				}
 
 				// 비밀번호 체크
-				const validate = await bcrypt.compare(password, "");
-				if (validate) {
+				const validate = await bcrypt.compare(password, user.password);
+				if (!validate) {
 					return done(null, false, { message: '비밀번호를 확인해주세요' });
 				}
-
 				return done(null, user);
 			}
 			catch (e) {

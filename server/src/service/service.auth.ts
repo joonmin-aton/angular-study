@@ -22,29 +22,34 @@ const register = async (req: any, res: any) => {
     }
 }
 
-const signIn = (req: any, res: any) =>
+const signIn = (req: any, res: any) => {
     passport.authenticate(
-        'local', 
-        {
-            successRedirect: "/",
-            failureRedirect: "/login",
-        },
-        (error: any, user: any) => {
-            res.status(200).json({
-                code: "0000",
-                message: "success",
-                data: {
-                    accessToken: jwt.sign({
-                        id: user?.id,
-                    }, JWT_SECRET_KEY, {
-                        audience: user?.id,
-                        algorithm: "HS256",
-                        expiresIn: Math.floor(Date.now() / 1000) + (60 * 60)
-                    })
-                }
-            })
+        'local',
+        (error: any, user: any, info: any) => {
+            if (user) {
+                res.status(200).json({
+                    code: "0000",
+                    message: "success",
+                    data: {
+                        accessToken: jwt.sign({
+                            id: user?.id,
+                        }, JWT_SECRET_KEY, {
+                            audience: user?.id,
+                            algorithm: "HS256",
+                            expiresIn: Math.floor(Date.now() / 1000) + (60 * 60)
+                        })
+                    }
+                })
+            }
+            else {
+                res.status(400).json({
+                    code: "1000",
+                    message: info?.message ?? "failed"
+                })
+            }
         }
-    );
+    )( req, res);
+}
 
 const signOut = (req: any, res: any) => {
     //passport 정보 삭제

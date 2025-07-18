@@ -23,10 +23,7 @@ export default (app: any, path: string) => {
     router.post(`${API_AUTH}/register`, AuthService.register);
 
     // 로그인
-    router.post(
-        `${API_AUTH}/signIn`,
-        AuthService.signIn
-    );
+    router.post(`${API_AUTH}/signIn`, AuthService.signIn);
 
     // 로그아웃
     router.post(`${API_AUTH}/signOut`, AuthService.signOut);

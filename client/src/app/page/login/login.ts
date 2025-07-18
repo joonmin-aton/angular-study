@@ -22,7 +22,7 @@ export class LoginPage {
         window.location.href = "/register";
     }
 
-    login = () => {
+    login = async () => {
         const formData = {
             email: this.email,
             password: this.password
@@ -33,6 +33,22 @@ export class LoginPage {
             alert(result?.error?.issues[0]?.message);
             return;
         }
+
+        const response = await fetch(
+            "http://localhost:3000/api/auth/signIn",
+            {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: this.email,
+                    password: this.password
+                })
+            }
+        )
+
+        const json = await response.json()
     }
 
     setEmail = (e: any) => {
