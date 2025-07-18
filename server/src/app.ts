@@ -5,24 +5,24 @@ import session from 'express-session';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import PassportConfig from './config/config.passport.ts';
-import router from './routes/routes.api.ts';
+import apiRouter from './routes/routes.api.ts';
 
 const app = express();
 const port = 3000;
 
 app.use(cookieParser());
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'secretJMPark', resave: true, saveUninitialized: true }));
 
-// PASSPORT 설정
+// // PASSPORT 설정
 app.use(passport.initialize());
 app.use(passport.session());
 
 PassportConfig();
 
 
-// Mongoose 설정
+// // Mongoose 설정
 mongoose
     .connect("mongodb://localhost:27017/study")
     .then(() => {
@@ -38,8 +38,7 @@ app.listen(port, () => {
     console.log(`Running server on port ${port}`)
 });
 
-
-app.use("/api", router)
+apiRouter(app, "/api");
 
 /**
  * 1. 사용자 인증

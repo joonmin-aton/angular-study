@@ -1,8 +1,25 @@
-import { Router } from 'express';
-import { Model } from 'mongoose';
+import Express, { Router } from 'express';
+import Mongoose, { Model } from 'mongoose';
 
 
-export default class RestfulUtil {
+export interface RestfulModel<T extends Mongoose.Document> extends Mongoose.Model<T> {
+  methods(any: any): RestfulModel<T>;
+  includeSchema(bool: boolean): RestfulModel<T>;
+  preprocess(req: Request, res: Response, next?: Express.NextFunction) : any;
+  detailRoute(req: Request, res: Response, next?: Express.NextFunction) : any;
+  // filter(id: null|string, filters: Object, fromWeb: undefined|boolean, mongooseQuery?: Mongoose.Query<T>);
+  filter(id: null | string, filters: Object, options: undefined | null | any) : any;
+  register(app: Express.Application, path: string, aclPath?: string) : any;
+  route(
+    path: string,
+    method: string | Function,
+    fn?: Function | any
+  ): RestfulModel<T>;
+  routes: Object;
+}
+
+
+export class RestfulUtil {
   name: string;
   schema: Model<any>;
 
