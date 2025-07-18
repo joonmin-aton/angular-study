@@ -1,4 +1,7 @@
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import { JWT_SECRET_KEY } from '../config/config.passport.ts';
 import userSchema from "../schema/schema.user.ts";
 
 const register = async (req: any, res: any) => {
@@ -7,7 +10,11 @@ const register = async (req: any, res: any) => {
         if (exist) {
           return res.status(400).json({ message: `Email already exists` });
         }
-        const newOne = new userSchema(req.body);
+        const newOne = new userSchema({
+            email: req.body.email,
+            name: req.body.name,
+            password: bcrypt.hash(req.body.password, 10)
+        });
         const saved = await newOne.save();
         res.status(200).json(saved);
     } catch (err) {
@@ -15,10 +22,29 @@ const register = async (req: any, res: any) => {
     }
 }
 
-const signIn = passport.authenticate('local', {
-    successRedirect: "/",
-    failureRedirect: "/login",
-})
+const signIn = (req: any, res: any) =>
+    passport.authenticate(
+        'local', 
+        {
+            successRedirect: "/",
+            failureRedirect: "/login",
+        },
+        (error: any, user: any) => {
+            res.status(200).json({
+                code: "0000",
+                message: "success",
+                data: {
+                    accessToken: jwt.sign({
+                        id: user?.id,
+                    }, JWT_SECRET_KEY, {
+                        audience: user?.id,
+                        algorithm: "HS256",
+                        expiresIn: Math.floor(Date.now() / 1000) + (60 * 60)
+                    })
+                }
+            })
+        }
+    );
 
 const signOut = (req: any, res: any) => {
     //passport 정보 삭제
