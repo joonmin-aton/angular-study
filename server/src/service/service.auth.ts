@@ -13,7 +13,7 @@ const register = async (req: any, res: any) => {
         const newOne = new userSchema({
             email: req.body.email,
             name: req.body.name,
-            password: bcrypt.hash(req.body.password, 10)
+            password: await bcrypt.hash(req.body.password, 10)
         });
         const saved = await newOne.save();
         res.status(200).json(saved);

@@ -31,5 +31,7 @@ export default (app: any, path: string) => {
     // 로그아웃
     router.post(`${API_AUTH}/signOut`, AuthService.signOut);
 
+    app.use(router);
+
     return router;
 };

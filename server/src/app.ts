@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import mongoose from 'mongoose';
@@ -10,6 +11,7 @@ import apiRouter from './routes/routes.api.ts';
 const app = express();
 const port = 3000;
 
+app.use(cors())
 app.use(cookieParser());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
