@@ -1,8 +1,18 @@
-<div class="w-screen h-screen flex justify-center">
+<div class="w-full min-h-screen flex justify-center">
     <app-blog-header class="grow-2 w-full justify-end hidden md:flex bg-black/5"/>
-    <div class="grow-3 w-full">
-        <div class="w-full p-4">
+    <div class="grow-3 w-full overflow-y">
+        <div class="w-full py-8 px-4 flex flex-col gap-6">
             <div class="text-2xl font-bold mb-10">블로그</div>
+            <div class="flex flex-col border-t-2 border-b-2">
+                <div *ngFor="let item of list; index as i" class="py-2 border-b border-black/30 last:border-0">
+                    <div class="flex items-center">
+                        <a class="flex-grow cursor-pointer" (click)="rowClick(item)">{{item.title}}</a>
+                        <div class="text-xs text-black/70">{{dateFormat(item.createdAt)}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2">
+            </div>
         </div>
     </div>
 </div>

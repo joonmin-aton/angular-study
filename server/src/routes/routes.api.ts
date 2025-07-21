@@ -15,7 +15,7 @@ export default (app: any, path: string) => {
     userResource.serve(app, `${path}/users`);
 
     const postResource = new RestfulResource<any>(postSchema);
-    postResource.before(['post', 'put', 'delete'], passport.authenticate('jwt'))
+    postResource.before(['get', 'post', 'put', 'delete'], passport.authenticate('jwt'))
     postResource.serve(app, `${path}/posts`);
 
 

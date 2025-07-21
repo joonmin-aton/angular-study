@@ -1,8 +1,9 @@
 import { isPlatformBrowser, NgIf } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from "@angular/core";
+import { Component, Inject, OnChanges, OnDestroy, OnInit, PLATFORM_ID, SimpleChanges } from "@angular/core";
 import { FormsModule } from '@angular/forms';
 import { Editor, NgxEditorComponent, NgxEditorMenuComponent, toHTML, Toolbar } from 'ngx-editor';
 import { HeaderLayout } from "../../component/header/header.component";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-editor',
@@ -12,7 +13,10 @@ import { HeaderLayout } from "../../component/header/header.component";
   imports: [NgIf, HeaderLayout, NgxEditorComponent, NgxEditorMenuComponent, FormsModule],
 })
 export class EditorPage implements OnInit, OnDestroy {
-  html: any;
+  id: string | null;
+  title: any = '';
+  contents: any = '';
+  keywords: any = '';
   editor!: Editor;
   toolbar: Toolbar = [
     ['bold', 'italic'],
@@ -25,27 +29,73 @@ export class EditorPage implements OnInit, OnDestroy {
     ['align_left', 'align_center', 'align_right', 'align_justify'],
   ];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  constructor(private route: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object) {
+    this.id = route.snapshot.paramMap.get('id');
+    console.log(this.id);
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       // 브라우저 환경에서만 동작하게 코드 작성
       this.editor = new Editor();
+      if (this.id) {
+        this.load();
+      }
     }
   }
-
   ngOnDestroy(): void {
     this.editor?.destroy();
   }
 
-  editorChange = (e: any) => {
-    console.log(e);
-    const htmlText = toHTML(this.html);
-    console.log(htmlText);
+  onChange = (e: any) => {
+    if(e?.target?.name === 'title') {
+      this.title = e?.target?.value;
+    }
+    if(e?.target?.name === 'keywords') {
+      this.keywords = e?.target?.value;
+    }
   }
 
-  onSave = () => {
-    console.log(this.editor);
+  load = async () => {
+    const response = await fetch(
+      `http://localhost:3000/api/posts?_id=${this.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          "Authentication": "Bearer "
+        }
+      }
+    )
+
+    const json = await response.json();
+    console.log(json);
+    this.title = json?.[0]?.title;
+    this.contents = json?.[0]?.contents;
+    this.keywords = json?.[0]?.keywords.join(',');
+  }
+
+  onSave = async () => {
+    console.log(this.contents);
+
+    const response = await fetch(
+      "http://localhost:3000/api/posts",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "Authentication": "Bearer "
+        },
+        body: JSON.stringify({
+          title: this.title,
+          contents: this.contents,
+          keywords: this.keywords.split(',')
+        })
+      }
+    )
+
+    const json = await response.json()
+    console.log(json);
   }
 
 }

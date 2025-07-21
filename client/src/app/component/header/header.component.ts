@@ -5,10 +5,14 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderLayout {
+export class HeaderLayout implements OnInit, OnDestroy {
 
   constructor() {
 
+  }
+  ngOnInit(): void {
+  }
+  ngOnDestroy(): void {
   }
 
   load = async () => {

@@ -11,9 +11,12 @@ import { ActivatedRoute } from "@angular/router";
 export class PostPage implements OnInit, OnDestroy {
   blogId: string | null;
   postId: string | null;
+  data: any;
   constructor(private route: ActivatedRoute) {
     this.blogId = route.snapshot.paramMap.get('blogId');
     this.postId = route.snapshot.paramMap.get('postId');
+
+    this.load();
   }
 
   ngOnInit(): void {
@@ -26,16 +29,18 @@ export class PostPage implements OnInit, OnDestroy {
 
   load = async () => {
     const response = await fetch(
-      "http://localhost:3000/api/auth/signIn",
+      `http://localhost:3000/api/posts?_id=${this.postId}`,
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-type": "application/json",
           "Authentication": "Bearer "
-        },
+        }
       }
     )
 
-    const json = await response.json()
+    const json = await response.json();
+    console.log(json);
+    this.data = json;
   }
 }
