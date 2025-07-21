@@ -1,1 +1,17 @@
-<div>EDITOR</div>
+<div class="w-screen h-screen flex justify-center">
+    <app-blog-header class="grow-2 w-full justify-end hidden md:flex bg-black/5" />
+    <div class="grow-3 w-full">
+        <div class="w-full py-8 px-4 flex flex-col gap-6">
+            <div class="text-2xl font-bold">포스트 작성</div>
+            <div class="flex flex-col gap-4">
+                <div class="border border-black/30">
+                    <ngx-editor-menu *ngIf="editor" [editor]="editor" [toolbar]="toolbar"/>
+                    <ngx-editor *ngIf="editor" [editor]="editor" [ngModel]="html" [disabled]="false"
+                        (onChange)="editorChange($event)"
+                        [placeholder]="'Type here...'" height="50px"/>
+                </div>
+                <div class="py-2 rounded bg-blue-500/70 text-white text-center w-[80px] cursor-pointer" (click)="onSave()">저장</div>
+            </div>
+        </div>
+    </div>
+</div>
