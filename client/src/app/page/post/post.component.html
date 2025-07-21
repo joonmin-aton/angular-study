@@ -5,6 +5,10 @@
             <div class="text-2xl font-bold">{{data?.title}}</div>
             <div class="flex flex-col border-t-2 border-b-2 text-black/60 py-6 px-2 text-xs"
                 bind-innerHTML="data?.contents"></div>
+            <div class="flex gap-2">
+                <div class="mt-2 py-2 rounded bg-blue-500/70 text-white text-center w-[80px] cursor-pointer" (click)="onSave()">수정</div>
+                <div class="mt-2 py-2 rounded bg-red-500/70 text-white text-center w-[80px] cursor-pointer" (click)="onDelete()">삭제</div>
+            </div>
         </div>
     </div>
 </div>
