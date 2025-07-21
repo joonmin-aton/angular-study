@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Editor, NgxEditorComponent, NgxEditorMenuComponent, toHTML, Toolbar } from 'ngx-editor';
 import { HeaderLayout } from "../../component/header/header.component";
 import { ActivatedRoute } from '@angular/router';
+import dayjs from 'dayjs';
 
 @Component({
   selector: 'app-editor',
@@ -31,7 +32,6 @@ export class EditorPage implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object) {
     this.id = route.snapshot.paramMap.get('id');
-    console.log(this.id);
   }
 
   ngOnInit(): void {
@@ -39,7 +39,9 @@ export class EditorPage implements OnInit, OnDestroy {
       // 브라우저 환경에서만 동작하게 코드 작성
       this.editor = new Editor();
       if (this.id) {
-        this.load();
+        setTimeout(() => {
+          this.load();
+        }, 100);
       }
     }
   }
@@ -79,17 +81,19 @@ export class EditorPage implements OnInit, OnDestroy {
     console.log(this.contents);
 
     const response = await fetch(
-      "http://localhost:3000/api/posts",
+      `http://localhost:3000/api/posts${this.id ? `/${this.id}` : ''}`,
       {
-        method: "POST",
+        method: this.id ? "PUT" : "POST",
         headers: {
           "Content-type": "application/json",
           "Authentication": "Bearer "
         },
         body: JSON.stringify({
+          _id: this.id ?? undefined,
           title: this.title,
           contents: this.contents,
-          keywords: this.keywords.split(',')
+          keywords: this.keywords.split(','),
+          updatedAt: this.id ? dayjs().toDate() : undefined
         })
       }
     )

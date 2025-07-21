@@ -20,7 +20,9 @@ export class PostPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    throw new Error("Method not implemented.");
+    setTimeout(() => {
+      this.load();
+    }, 1);
   }
 
   ngOnDestroy(): void {

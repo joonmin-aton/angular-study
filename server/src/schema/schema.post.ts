@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
-import dayjs from 'dayjs';
 
 const postSchema = new mongoose.Schema({
     title: { type: String, required: true },
     contents: { type: String, required: true },
     keywords: { type: Array, required: false },
-    createdAt: { type: Date, required: false, default: dayjs().toDate() },
+    createdAt: { type: Date, required: false, default: () => new Date() },
     updatedAt: { type: Date, required: false },
 })
 

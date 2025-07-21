@@ -13,12 +13,14 @@ import dayjs from 'dayjs';
 export class BlogPage implements OnInit, OnDestroy {
   id: string | null;
   list: any[];
-  constructor(private route: ActivatedRoute, private router : Router) {
+  constructor(private route: ActivatedRoute, private router: Router) {
     this.id = route.snapshot.paramMap.get('id');
     this.list = [];
   }
   ngOnInit(): void {
-    this.load();
+    setTimeout(() => {
+      this.load();
+    }, 1);
   }
   ngOnDestroy(): void {
   }
@@ -35,17 +37,13 @@ export class BlogPage implements OnInit, OnDestroy {
   load = async () => {
     const page = 1;
     const size = 10;
-    const params = {
-      query: {
-        skip: (page - 1) * size,
-        limit: size,
-        sort: {
-          createdAt: -1
-        }
-      }
+    const params: any = {
+      skip: (page - 1) * size,
+      limit: size,
+      sort: '-createdAt'
     }
     const response = await fetch(
-      "http://localhost:3000/api/posts",
+      "http://localhost:3000/api/posts?" + new URLSearchParams(params).toString(),
       {
         method: "GET",
         headers: {
