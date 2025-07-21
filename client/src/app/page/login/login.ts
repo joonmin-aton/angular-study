@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { Location } from "@angular/common";
 import z from "zod";
+import { Router } from "@angular/router";
 
 const LoginSchema = z.strictObject({
     email: z.email({ error: "올바른 이메일을 입력하세요" }),
@@ -16,10 +17,10 @@ export class LoginPage {
     public email: string = "";
     public password: string = "";
 
-    constructor(private location: Location) {}
+    constructor(private router: Router) {}
 
     register = () => {
-        window.location.href = "/register";
+        this.router.navigate(["/register"]);
     }
 
     login = async () => {

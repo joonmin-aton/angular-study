@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { Location } from "@angular/common";
 import z from "zod";
+import { Router } from "@angular/router";
 
 const RegisterSchema = z.strictObject({
     email: z.email({ error: "올바른 이메일을 입력하세요" }),
@@ -21,7 +22,8 @@ export class RegisterPage {
     public userName: string = "";
     
     constructor(
-        private location: Location
+        private location: Location,
+        private router : Router
     ) {
     }
 
@@ -64,7 +66,7 @@ export class RegisterPage {
 
         if (response.ok) {
             alert("회원가입에 성공하였습니다.");
-            window.location.href = "/login";
+            this.router.navigate(["/login"]);
         }
         else {
             alert("회원가입에 실패했습니다.");

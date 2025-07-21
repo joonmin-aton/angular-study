@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-blog',
@@ -6,5 +7,8 @@ import { Component } from "@angular/core";
   styleUrl: './blog.css'
 })
 export class BlogPage {
-
+  id: string | null;
+  constructor(private route: ActivatedRoute) {
+    this.id = route.snapshot.paramMap.get('id');
+  }
 }

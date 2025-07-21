@@ -4,6 +4,7 @@ import { LoginPage } from './page/login/login';
 import { RegisterPage } from './page/register/register';
 import { PostPage } from './page/post/post';
 import { EditorPage } from './page/editor/editor';
+import { BlogPage } from './page/blog/blog';
 
 export const routes: Routes = [
     {
@@ -20,7 +21,7 @@ export const routes: Routes = [
     },
     {
         path: 'blog/:id',
-        component: PostPage,
+        component: BlogPage,
     },
     {
         path: 'blog/:blogId/post/:postId',
