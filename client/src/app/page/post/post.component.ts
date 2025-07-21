@@ -42,7 +42,6 @@ export class PostPage implements OnInit, OnDestroy {
     )
 
     const json = await response.json();
-    console.log(json);
-    this.data = json;
+    this.data = json?.[0];
   }
 }

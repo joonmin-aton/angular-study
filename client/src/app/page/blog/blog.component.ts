@@ -20,7 +20,7 @@ export class BlogPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     setTimeout(() => {
       this.load();
-    }, 1);
+    }, 1000);
   }
   ngOnDestroy(): void {
   }
@@ -29,9 +29,14 @@ export class BlogPage implements OnInit, OnDestroy {
     return dayjs(date).format("YYYY.MM.DD HH:mm")
   }
 
+  htmlToText = (html: any) => {
+    if (html)
+      return html.replace(/<[^>]*>/g, '');
+    return "";
+  }
+
   rowClick = (item: any) => {
-    console.log(item);
-    this.router.navigate([`/editor/${item?._id}`]);
+    this.router.navigate([`blog/${this.id}/post/${item?._id}`]);
   }
 
   load = async () => {
@@ -43,17 +48,23 @@ export class BlogPage implements OnInit, OnDestroy {
       sort: '-createdAt'
     }
     const response = await fetch(
-      "http://localhost:3000/api/posts?" + new URLSearchParams(params).toString(),
+      // "http://localhost:3000/api/posts?" + new URLSearchParams(params).toString(),
+      "http://localhost:3000/api/posts/list",
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-type": "application/json",
           "Authentication": "Bearer "
-        }
+        },
+        body: JSON.stringify(params)
       }
     )
 
     const json = await response.json();
-    this.list = json;
+    this.list = json?.list ?? [];
+    this.list = this.list.map((item) => ({
+      ...item,
+      contents: this.htmlToText(item.contents)
+    }));
   }
 }
