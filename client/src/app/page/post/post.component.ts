@@ -2,8 +2,8 @@ import { Component } from "@angular/core";
 
 @Component({
   selector: 'app-post',
-  templateUrl: './post.html',
-  styleUrl: './post.css'
+  templateUrl: './post.component.html',
+  styleUrl: './post.component.css'
 })
 export class PostPage {
 

@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { HomePage } from './page/home/home';
-import { LoginPage } from './page/login/login';
-import { RegisterPage } from './page/register/register';
-import { PostPage } from './page/post/post';
-import { EditorPage } from './page/editor/editor';
-import { BlogPage } from './page/blog/blog';
+import { HomePage } from './page/home/home.component';
+import { LoginPage } from './page/login/login.component';
+import { RegisterPage } from './page/register/register.component';
+import { PostPage } from './page/post/post.component';
+import { EditorPage } from './page/editor/editor.component';
+import { BlogPage } from './page/blog/blog.component';
 
 export const routes: Routes = [
     {

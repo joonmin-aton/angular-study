@@ -12,8 +12,8 @@ const RegisterSchema = z.strictObject({
 
 @Component({
   selector: 'app-register',
-  templateUrl: './register.html',
-  styleUrl: './register.css'
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.css'
 })
 export class RegisterPage {
     public email: string = "";

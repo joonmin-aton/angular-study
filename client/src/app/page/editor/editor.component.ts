@@ -2,8 +2,8 @@ import { Component } from "@angular/core";
 
 @Component({
   selector: 'app-editor',
-  templateUrl: './editor.html',
-  styleUrl: './editor.css'
+  templateUrl: './editor.component.html',
+  styleUrl: './editor.component.css'
 })
 export class EditorPage {
 
