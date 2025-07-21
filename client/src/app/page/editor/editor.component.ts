@@ -1,5 +1,5 @@
 import { isPlatformBrowser, NgIf } from '@angular/common';
-import { Component, Inject, OnChanges, OnDestroy, OnInit, PLATFORM_ID, SimpleChanges } from "@angular/core";
+import { ChangeDetectorRef, Component, Inject, OnChanges, OnDestroy, OnInit, PLATFORM_ID, SimpleChanges } from "@angular/core";
 import { FormsModule } from '@angular/forms';
 import { Editor, NgxEditorComponent, NgxEditorMenuComponent, toHTML, Toolbar } from 'ngx-editor';
 import { HeaderLayout } from "../../component/header/header.component";
@@ -30,7 +30,7 @@ export class EditorPage implements OnInit, OnDestroy {
     ['align_left', 'align_center', 'align_right', 'align_justify'],
   ];
 
-  constructor(private route: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(private route: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object, private cdr: ChangeDetectorRef) {
     this.id = route.snapshot.paramMap.get('id');
   }
 
@@ -75,6 +75,8 @@ export class EditorPage implements OnInit, OnDestroy {
     this.title = json?.[0]?.title;
     this.contents = json?.[0]?.contents;
     this.keywords = json?.[0]?.keywords.join(',');
+
+    this.cdr.markForCheck();
   }
 
   onSave = async () => {

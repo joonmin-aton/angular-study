@@ -20,7 +20,7 @@ export class LoginPage {
     constructor(private router: Router) {}
 
     register = () => {
-        this.router.navigate(["/register"]);
+        window.location.href="register";
     }
 
     login = async () => {

@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { HeaderLayout } from "../../component/header/header.component";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { HeaderLayout } from "../../component/header/header.component";
 
 @Component({
   selector: 'app-post',
@@ -12,7 +12,7 @@ export class PostPage implements OnInit, OnDestroy {
   blogId: string | null;
   postId: string | null;
   data: any;
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {
     this.blogId = route.snapshot.paramMap.get('blogId');
     this.postId = route.snapshot.paramMap.get('postId');
 
@@ -43,17 +43,19 @@ export class PostPage implements OnInit, OnDestroy {
 
     const json = await response.json();
     this.data = json?.[0];
+
+    this.cdr.markForCheck();
   }
 
-  onSave = async () => {
-    this.router.navigate([`/edit/${this.postId}`]);
+  onEdit = async () => {
+    window.location.href=`/editor/${this.postId}`;
   }
 
   onDelete = async () => {
     const response = await fetch(
-      `http://localhost:3000/api/posts?_id=${this.postId}`,
+      `http://localhost:3000/api/posts/${this.postId}`,
       {
-        method: "GET",
+        method: "DELETE",
         headers: {
           "Content-type": "application/json",
           "Authentication": "Bearer "

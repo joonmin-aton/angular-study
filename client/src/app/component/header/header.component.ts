@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 
 @Component({
   selector: 'app-blog-header',
@@ -7,7 +7,7 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 })
 export class HeaderLayout implements OnInit, OnDestroy {
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
 
   }
   ngOnInit(): void {

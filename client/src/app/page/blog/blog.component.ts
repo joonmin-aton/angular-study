@@ -1,8 +1,8 @@
 import { NgFor } from "@angular/common";
-import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
+import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { HeaderLayout } from "../../component/header/header.component";
 import dayjs from 'dayjs';
+import { HeaderLayout } from "../../component/header/header.component";
 
 @Component({
   selector: 'app-blog',
@@ -13,14 +13,16 @@ import dayjs from 'dayjs';
 export class BlogPage implements OnInit, OnDestroy {
   id: string | null;
   list: any[];
-  constructor(private route: ActivatedRoute, private router: Router) {
+  pageable: any[];
+
+  constructor(private route: ActivatedRoute, private router: Router, private cdr: ChangeDetectorRef) {
     this.id = route.snapshot.paramMap.get('id');
     this.list = [];
+    this.pageable = [];
   }
+  
   ngOnInit(): void {
-    setTimeout(() => {
-      this.load();
-    }, 1000);
+    this.load();
   }
   ngOnDestroy(): void {
   }
@@ -36,7 +38,7 @@ export class BlogPage implements OnInit, OnDestroy {
   }
 
   rowClick = (item: any) => {
-    this.router.navigate([`blog/${this.id}/post/${item?._id}`]);
+    window.location.href=`blog/${this.id}/post/${item?._id}`;
   }
 
   load = async () => {
@@ -61,10 +63,14 @@ export class BlogPage implements OnInit, OnDestroy {
     )
 
     const json = await response.json();
+
+    this.pageable = json?.pageable ?? [];
     this.list = json?.list ?? [];
     this.list = this.list.map((item) => ({
       ...item,
       contents: this.htmlToText(item.contents)
     }));
+
+    this.cdr.markForCheck();
   }
 }
