@@ -31,7 +31,7 @@ export class EditorPage implements OnInit, OnDestroy {
   ];
 
   constructor(private route: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object, private cdr: ChangeDetectorRef) {
-    this.id = route.snapshot.paramMap.get('id');
+    this.id = this.route.snapshot.paramMap.get('id');
   }
 
   ngOnInit(): void {
@@ -101,7 +101,7 @@ export class EditorPage implements OnInit, OnDestroy {
     )
 
     const json = await response.json()
-    console.log(json);
+    window.location.href = "/blog";
   }
 
 }

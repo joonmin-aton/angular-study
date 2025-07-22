@@ -1,4 +1,4 @@
-import { NgFor } from "@angular/common";
+import { NgFor, NgIf } from "@angular/common";
 import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import dayjs from 'dayjs';
@@ -8,20 +8,26 @@ import { HeaderLayout } from "../../component/header/header.component";
   selector: 'app-blog',
   templateUrl: './blog.component.html',
   styleUrl: './blog.component.css',
-  imports: [HeaderLayout, NgFor]
+  imports: [HeaderLayout, NgFor, NgIf]
 })
 export class BlogPage implements OnInit, OnDestroy {
   id: string | null;
   list: any[];
-  pageable: any[];
+  pageable: any;
+  pages: any[];
+  params: any;
 
   constructor(private route: ActivatedRoute, private router: Router, private cdr: ChangeDetectorRef) {
-    this.id = route.snapshot.paramMap.get('id');
+    this.id = this.route.snapshot.paramMap.get('id');
     this.list = [];
     this.pageable = [];
+    this.pages = [];
   }
   
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.params = params;
+    });
     this.load();
   }
   ngOnDestroy(): void {
@@ -41,13 +47,15 @@ export class BlogPage implements OnInit, OnDestroy {
     window.location.href=`blog/${this.id}/post/${item?._id}`;
   }
 
+  pageClick = (page: any) => {
+    window.location.href=`/blog?page=${page}`;
+  }
+
   load = async () => {
-    const page = 1;
-    const size = 10;
+    const page = this.params['page'];
+    const size = 5;
     const params: any = {
-      skip: (page - 1) * size,
-      limit: size,
-      sort: '-createdAt'
+      page, size
     }
     const response = await fetch(
       // "http://localhost:3000/api/posts?" + new URLSearchParams(params).toString(),
@@ -70,6 +78,10 @@ export class BlogPage implements OnInit, OnDestroy {
       ...item,
       contents: this.htmlToText(item.contents)
     }));
+
+    for (let i=this.pageable?.startPage; i<this.pageable?.endPage + 1; i++) {
+      this.pages.push(i)
+    }
 
     this.cdr.markForCheck();
   }

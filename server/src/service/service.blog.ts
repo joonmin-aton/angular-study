@@ -41,19 +41,20 @@ const deletePost = async (req: any, res: any) => {
 
 const list = async (req: any, res: any) => {
     try {
-        const { page = 1, size = 10 } = req?.body;
+        const { page, size } = req?.body;
         const list = await postSchema.find()
                                 .limit(size * 1)
                                 .skip((page - 1 ) * size)
                                 .sort({ createdAt: -1 });
-                                
+
         const totalCounts : number = await postSchema.countDocuments();
         const curPage = page;
         const rowsPerPage = size;
         const pageSize = 5;        // 페이지네이션 길이
+        console.log((page-1) / pageSize);
         const totalPages = Math.ceil(totalCounts / size);
-        const startPage = (page / pageSize) * pageSize + 1;
-        let endPage = ((page / pageSize) + 1) * pageSize;
+        const startPage = Math.floor((page-1) / pageSize) * pageSize + 1;
+        let endPage = (Math.floor((page-1) / pageSize) + 1) * pageSize;
         if (totalPages < endPage) endPage = totalPages;
 
         let hasPrev = true;

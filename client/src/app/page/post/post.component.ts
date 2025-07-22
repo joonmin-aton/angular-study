@@ -13,8 +13,8 @@ export class PostPage implements OnInit, OnDestroy {
   postId: string | null;
   data: any;
   constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {
-    this.blogId = route.snapshot.paramMap.get('blogId');
-    this.postId = route.snapshot.paramMap.get('postId');
+    this.blogId = this.route.snapshot.paramMap.get('blogId');
+    this.postId = this.route.snapshot.paramMap.get('postId');
 
     this.load();
   }

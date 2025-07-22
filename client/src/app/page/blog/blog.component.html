@@ -18,6 +18,12 @@
                 </div>
             </div>
             <div class="flex gap-2">
+                <div *ngIf="pageable?.hasNext">이전</div>
+                <div *ngFor="let page of pages; index as i" class="cursor-pointer" (click)="pageClick(page)">
+                    <div *ngIf="pageable?.curPage == page" class="font-bold rounded-md bg-blue-500/80 text-white px-3 py-1">{{page}}</div>
+                    <div *ngIf="pageable?.curPage != page" class="rounded-md bg-black/5 px-3 py-1">{{page}}</div>
+                </div>
+                <div *ngIf="pageable?.hasNext">다음</div>
             </div>
         </div>
     </div>
