@@ -20,9 +20,10 @@ export default (app: any, path: string) => {
     router.get(`${path}/user/info`, UserService.info);
 
     const postResource = new RestfulResource<any>(postSchema);
-    postResource.before(['post', 'put', 'delete'], passport.authenticate('jwt'))
+    postResource.before(['get', 'post', 'put', 'delete'], passport.authenticate('jwt'))
     postResource.serve(app, API_POSTS);
     router.post(`${path}/blog/write`, BlogService.writePost);
+    router.put(`${path}/blog/update`, BlogService.updatePost);
     router.post(`${path}/blog/list`, BlogService.list);
     router.post(`${path}/blog/top5`, BlogService.top5Keywords);
 

@@ -4,9 +4,11 @@ import postSchema from "../schema/schema.post.ts";
 
 const writePost = async (req: any, res: any) => {
     try {
-
         const token = req.headers?.authorization?.replace("Bearer ", "");
         const claims: any = jwt.verify(token, JWT_SECRET_KEY, { algorithms: ["HS256"]});
+        if (!claims) {
+            res.status(400).json("인증 실패되었습니다");
+        }
         const { title, contents, keywords } = req?.body;
         const newOne = new postSchema({
             userId: claims.id,
@@ -23,12 +25,18 @@ const writePost = async (req: any, res: any) => {
 
 const updatePost = async (req: any, res: any) => {
     try {
+        const token = req.headers?.authorization?.replace("Bearer ", "");
+        const claims: any = jwt.verify(token, JWT_SECRET_KEY, { algorithms: ["HS256"]});
+        if (!claims) {
+            res.status(400).json("인증 실패되었습니다");
+        }
         const { id, title, contents, keywords } = req?.body;
-        const exist = await postSchema.findOne({ id });
+        const exist = await postSchema.findOne({ _id: id });
         const saved = await exist?.updateOne({
-            ...exist,
+            userId: claims.id,
             title, contents, keywords
         })
+        console.log(saved)
         res.status(200).json(saved);
     } catch (err) {
         res.status(500).json({ message: err });

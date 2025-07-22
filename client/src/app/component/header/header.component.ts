@@ -1,20 +1,25 @@
-import { NgIf } from "@angular/common";
+import { NgFor, NgIf } from "@angular/common";
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
+import { LocalStorageService } from "../../service/localStorage";
 
 @Component({
   selector: 'app-blog-header',
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
-  providers: [CookieService],
-  imports: [NgIf]
+  providers: [CookieService, LocalStorageService],
+  imports: [NgIf, NgFor]
 })
 export class HeaderLayout implements OnInit, OnDestroy {
   isLogin: boolean = false;
   userData: any;
   keywords: any;
 
-  constructor(private cookieService: CookieService, private cdr: ChangeDetectorRef) {
+  constructor(
+    private cookieService: CookieService,
+    private localStorage: LocalStorageService,
+    private cdr: ChangeDetectorRef
+  ) {
     const accessToken = this.cookieService.get("x-access-token");
     if (accessToken) this.isLogin = true;
     this.load();
@@ -34,13 +39,15 @@ export class HeaderLayout implements OnInit, OnDestroy {
   }
 
   logout = () => {
-    this.cookieService.delete("x-access-token", "/");
-    this.cdr.markForCheck();
-    window.location.reload();
+    if(confirm("로그아웃 하시겠습니까?")) {
+      this.cookieService.delete("x-access-token", "/");
+      this.cdr.markForCheck();
+      window.location.reload();
+    }
   }
 
   link = (path?: string) => {
-    const blogId = window.localStorage.getItem("blog-id");
+    const blogId = this.localStorage.getItem("blog-id");
     window.location.href = `/blog/${blogId}${path ?? ""}`
   }
 
@@ -65,7 +72,7 @@ export class HeaderLayout implements OnInit, OnDestroy {
   }
 
   top5Keywords = async () => {
-    const blogId = window.localStorage.getItem("blog-id")
+    const blogId = this.localStorage.getItem("blog-id")
     const response = await fetch(
       `http://localhost:3000/api/blog/top5`,
       {
@@ -80,7 +87,10 @@ export class HeaderLayout implements OnInit, OnDestroy {
     );
 
     const json = await response.json();
-    console.log(json);
-    this.keywords = [];
+    this.keywords = json;
+  }
+
+  keywordClick = (keyword: any) => {
+    
   }
 }

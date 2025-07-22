@@ -15,7 +15,9 @@ import { CookieService } from 'ngx-cookie-service';
   imports: [NgIf, HeaderLayout, NgxEditorComponent, NgxEditorMenuComponent, FormsModule],
 })
 export class EditorPage implements OnInit, OnDestroy {
+  blogId: string | null;
   id: string | null;
+  pageTitle: any = '포스트 작성';
   title: any = '';
   contents: any = '';
   keywords: any = '';
@@ -37,17 +39,24 @@ export class EditorPage implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private cookieService: CookieService
   ) {
+    this.blogId = this.route.snapshot.paramMap.get('blogId');
     this.id = this.route.snapshot.paramMap.get('id');
+    if (this.id) {
+      this.pageTitle = "포스트 수정";
+    }
   }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       // 브라우저 환경에서만 동작하게 코드 작성
       this.editor = new Editor();
-      if (this.id) {
-        setTimeout(() => {
+      if (this.cookieService.get("x-access-token")) {
+        if (this.id) {
           this.load();
-        }, 100);
+        }
+      }
+      else {
+        window.location.href = `/blog/${this.blogId}`;
       }
     }
   }
@@ -77,7 +86,6 @@ export class EditorPage implements OnInit, OnDestroy {
     )
 
     const json = await response.json();
-    console.log(json);
     this.title = json?.[0]?.title;
     this.contents = json?.[0]?.contents;
     this.keywords = json?.[0]?.keywords.join(',');
@@ -88,17 +96,19 @@ export class EditorPage implements OnInit, OnDestroy {
   onSave = async () => {
     console.log(this.contents);
     const accessToken = this.cookieService.get("x-access-token");
+    console.log(this.blogId);
+    console.log(accessToken);
 
     const response = await fetch(
-      `http://localhost:3000/api/posts${this.id ? `/${this.id}` : ''}`,
+      `http://localhost:3000/api/blog/${this.id ? "update" : "write"}`,
       {
         method: this.id ? "PUT" : "POST",
         headers: {
           "Content-type": "application/json",
-          "Authentication": `Bearer ${accessToken}`
+          "Authorization": `Bearer ${accessToken}`
         },
         body: JSON.stringify({
-          _id: this.id ?? undefined,
+          id: this.id ?? undefined,
           title: this.title,
           contents: this.contents,
           keywords: this.keywords.split(','),
@@ -108,7 +118,10 @@ export class EditorPage implements OnInit, OnDestroy {
     )
 
     const json = await response.json()
-    window.location.href = "/blog";
+    if (response.status === 201 || response.status === 200) {
+      alert(this.id ? "수정이 완료되었습니다." : "작성이 완료되었습니다.");
+      window.location.href = `/blog/${this.blogId}`;
+    }
   }
 
 }

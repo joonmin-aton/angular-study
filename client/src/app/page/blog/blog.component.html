@@ -12,8 +12,8 @@
                     <div class="truncate text-xs text-black/50">
                         {{ item.contents }}
                     </div>
-                    <div *ngFor="let keyword of item?.keywords; index as i" class="flex gap-2 text-xs text-black/50 mt-2">
-                        <span class="rounded bg-black/10 px-1 py-1">#{{keyword}}</span>
+                    <div class="flex gap-2 text-xs text-black/50 mt-2">
+                        <div *ngFor="let keyword of item?.keywords; index as i" class="rounded bg-black/10 px-1 py-1">#{{keyword}}</div>
                     </div>
                 </div>
             </div>

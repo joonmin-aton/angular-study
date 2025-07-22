@@ -1,39 +1,42 @@
-import { NgFor, NgIf } from "@angular/common";
-import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from "@angular/core";
+import { isPlatformBrowser, NgFor, NgIf } from "@angular/common";
+import { AfterViewInit, ChangeDetectorRef, Component, DoCheck, DOCUMENT, Inject, NgZone, OnDestroy, OnInit, PLATFORM_ID } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import dayjs from 'dayjs';
 import { HeaderLayout } from "../../component/header/header.component";
+import { LocalStorageService } from "../../service/localStorage";
 
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
   styleUrl: './blog.component.css',
+  providers: [LocalStorageService],
   imports: [HeaderLayout, NgFor, NgIf]
 })
-export class BlogPage implements OnInit, OnDestroy {
+export class BlogPage implements OnInit {
   id: string | null;
   list: any[];
   pageable: any;
   pages: any[];
   params: any;
 
-  constructor(private route: ActivatedRoute, private router: Router, private cdr: ChangeDetectorRef) {
+  constructor(
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private localStorage: LocalStorageService
+  ) {
     this.id = this.route.snapshot.paramMap.get('id');
     this.list = [];
     this.pageable = [];
     this.pages = [];
+
+    this.localStorage.setItem("blog-id", this.id);
   }
-  
+
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.params = params;
     });
     this.load();
-    if (this.id) {
-      window.localStorage.setItem("blog-id", this.id)
-    }
-  }
-  ngOnDestroy(): void {
   }
 
   dateFormat = (date: any) => {
@@ -47,11 +50,11 @@ export class BlogPage implements OnInit, OnDestroy {
   }
 
   rowClick = (item: any) => {
-    window.location.href=`blog/${this.id}/post/${item?._id}`;
+    window.location.href = `blog/${this.id}/post/${item?._id}`;
   }
 
   pageClick = (page: any) => {
-    window.location.href=`/blog/${this.id}?page=${page}`;
+    window.location.href = `/blog/${this.id}?page=${page}`;
   }
 
   load = async () => {
@@ -80,7 +83,7 @@ export class BlogPage implements OnInit, OnDestroy {
       contents: this.htmlToText(item.contents)
     }));
 
-    for (let i=this.pageable?.startPage; i<this.pageable?.endPage + 1; i++) {
+    for (let i = this.pageable?.startPage; i < this.pageable?.endPage + 1; i++) {
       this.pages.push(i)
     }
 

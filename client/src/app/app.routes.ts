@@ -28,11 +28,11 @@ export const routes: Routes = [
         component: PostPage,
     },
     {
-        path: 'blog/:id/editor',
+        path: 'blog/:blogId/editor',
         component: EditorPage,
     },
     {
-        path: 'blog/:id/editor/:id',
+        path: 'blog/:blogId/editor/:id',
         component: EditorPage,
     },
 ];

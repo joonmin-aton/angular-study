@@ -7,11 +7,14 @@
             <div class="text-xs cursor-pointer" (click)="logout()">로그아웃</div>
         </div>
     </div>
-    <div class="text-black/70 flex flex-col gap-2">
-        <a class="block cursor-pointer" (click)="link()">블로그</a>
-        <a *ngIf="isLogin == true" class="block cursor-pointer" (click)="link('/editor')">작성하기</a>
-        <div class="">
-            <div>Top 5 Keyword</div>
+    <ul class="text-black/70 flex flex-col gap-2 list-disc">
+        <li class="block cursor-pointer" (click)="link()">블로그</li>
+        <li *ngIf="isLogin == true" class="block cursor-pointer" (click)="link('/editor')">작성하기</li>
+    </ul>
+    <div class="flex flex-col gap-2">
+        <div class="font-bold">Top 5 Keyword</div>
+        <div class="flex gap-1">
+            <div *ngFor="let keyword of keywords" class="rounded-xl border border-black/30 bg-white px-1.5 py-0.5 text-sm cursor-pointer" (click)="keywordClick(keyword)">{{keyword._id}}</div>
         </div>
     </div>
 </div>

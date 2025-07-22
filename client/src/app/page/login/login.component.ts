@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 import { CookieService } from 'ngx-cookie-service';
 import z from "zod";
+import { LocalStorageService } from "../../service/localStorage";
 
 
 const LoginSchema = z.strictObject({
@@ -13,13 +14,13 @@ const LoginSchema = z.strictObject({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
-  providers:[ CookieService ]
+  providers:[ CookieService, LocalStorageService]
 })
 export class LoginPage {
     public email: string = "";
     public password: string = "";
 
-    constructor(private cookieService: CookieService) {}
+    constructor(private cookieService: CookieService, private localStorage: LocalStorageService) {}
 
     register = () => {
         window.location.href="register";
@@ -56,7 +57,8 @@ export class LoginPage {
         if (json?.code === "0000") {
             if (json?.data?.accessToken) {
                 this.cookieService.set("x-access-token", json?.data?.accessToken);
-                window.location.href = "/blog";
+                const blogId = this.localStorage.getItem("blog-id");
+                window.location.href = `/blog/${blogId}`
             }
             else {
                 alert("다시 시도해주세요");
