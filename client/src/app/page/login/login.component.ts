@@ -52,8 +52,19 @@ export class LoginPage {
         )
 
         const json = await response.json();
-        this.cookieService.set("x-access-token", json?.data?.accessToken);
-        window.location.href = "/blog";
+        
+        if (json?.code === "0000") {
+            if (json?.data?.accessToken) {
+                this.cookieService.set("x-access-token", json?.data?.accessToken);
+                window.location.href = "/blog";
+            }
+            else {
+                alert("다시 시도해주세요");
+            }
+        }
+        else {
+            alert(json?.message);
+        }
     }
 
     setEmail = (e: any) => {
@@ -62,5 +73,11 @@ export class LoginPage {
 
     setPassword = (e: any) => {
         this.password = e?.target?.value;
+    }
+
+    keyup = (e: any) => {
+        if (e.keyCode === 13) {
+            this.login()
+        }
     }
 }

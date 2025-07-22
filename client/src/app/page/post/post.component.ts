@@ -48,7 +48,7 @@ export class PostPage implements OnInit, OnDestroy {
   }
 
   onEdit = async () => {
-    window.location.href=`/editor/${this.postId}`;
+    window.location.href=`/blog/${this.blogId}/editor/${this.postId}`;
   }
 
   onDelete = async () => {

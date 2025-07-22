@@ -20,10 +20,6 @@ export const routes: Routes = [
         component: RegisterPage,
     },
     {
-        path: 'blog',
-        component: BlogPage,
-    },
-    {
         path: 'blog/:id',
         component: BlogPage,
     },
@@ -32,11 +28,11 @@ export const routes: Routes = [
         component: PostPage,
     },
     {
-        path: 'editor',
+        path: 'blog/:id/editor',
         component: EditorPage,
     },
     {
-        path: 'editor/:id',
+        path: 'blog/:id/editor/:id',
         component: EditorPage,
     },
 ];

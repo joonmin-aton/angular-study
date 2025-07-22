@@ -1,9 +1,15 @@
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET_KEY } from "../config/config.passport.ts";
 import postSchema from "../schema/schema.post.ts";
 
 const writePost = async (req: any, res: any) => {
     try {
+
+        const token = req.headers?.authorization?.replace("Bearer ", "");
+        const claims: any = jwt.verify(token, JWT_SECRET_KEY, { algorithms: ["HS256"]});
         const { title, contents, keywords } = req?.body;
         const newOne = new postSchema({
+            userId: claims.id,
             title,
             contents,
             keywords,
@@ -41,8 +47,8 @@ const deletePost = async (req: any, res: any) => {
 
 const list = async (req: any, res: any) => {
     try {
-        const { page, size } = req?.body;
-        const list = await postSchema.find()
+        const { id, page, size } = req?.body;
+        const list = await postSchema.find({ userId: id })
                                 .limit(size * 1)
                                 .skip((page - 1 ) * size)
                                 .sort({ createdAt: -1 });
@@ -90,12 +96,40 @@ const detail = async (req: any, res: any) => {
     }
 }
 
+const top5Keywords = async (req: any, res: any) => {
+    try {
+        const { id } = req?.body;       // blog 아이디
+        const exist = await postSchema.aggregate([
+            {
+                $match: {
+                    userId: id,
+                }
+            },
+            {$unwind: "$keywords"},
+            {
+                $group: {
+                    _id: "$keywords",
+                    count: {
+                        "$sum": 1
+                    }
+                }
+            },
+            { $sort: { count: -1 } },
+            { $limit: 5 }
+        ]);
+        res.status(200).json(exist);
+    } catch (err) {
+        res.status(500).json({ message: err });
+    }
+}
+
 const BlogService = {
     writePost,
     updatePost,
     deletePost,
     list,
-    detail
+    detail,
+    top5Keywords
 }
 
 export default BlogService;

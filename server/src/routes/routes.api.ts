@@ -22,7 +22,9 @@ export default (app: any, path: string) => {
     const postResource = new RestfulResource<any>(postSchema);
     postResource.before(['post', 'put', 'delete'], passport.authenticate('jwt'))
     postResource.serve(app, API_POSTS);
+    router.post(`${path}/blog/write`, BlogService.writePost);
     router.post(`${path}/blog/list`, BlogService.list);
+    router.post(`${path}/blog/top5`, BlogService.top5Keywords);
 
 
     // 회원가입

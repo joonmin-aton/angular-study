@@ -12,7 +12,8 @@
             </div>
             <div class="flex flex-col gap-1">
                 <div>비밀번호</div>
-                <input type="password" class="w-full border border-slate-300 rounded px-2 py-1" [value]="password" (change)="setPassword($event)"/>
+                <input type="password" class="w-full border border-slate-300 rounded px-2 py-1" [value]="password" (change)="setPassword($event)"
+                    (keyup)="keyup($event)"/>
             </div>
         </div>
         <div class="flex flex-col gap-2 ">

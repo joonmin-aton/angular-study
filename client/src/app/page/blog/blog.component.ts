@@ -29,6 +29,9 @@ export class BlogPage implements OnInit, OnDestroy {
       this.params = params;
     });
     this.load();
+    if (this.id) {
+      window.localStorage.setItem("blog-id", this.id)
+    }
   }
   ngOnDestroy(): void {
   }
@@ -48,14 +51,14 @@ export class BlogPage implements OnInit, OnDestroy {
   }
 
   pageClick = (page: any) => {
-    window.location.href=`/blog?page=${page}`;
+    window.location.href=`/blog/${this.id}?page=${page}`;
   }
 
   load = async () => {
     const page = this.params['page'] ?? 1;
     const size = 5;
     const params: any = {
-      page, size
+      id: this.id, page, size
     }
     const response = await fetch(
       "http://localhost:3000/api/blog/list",

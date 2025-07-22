@@ -5,6 +5,7 @@ import { Editor, NgxEditorComponent, NgxEditorMenuComponent, toHTML, Toolbar } f
 import { HeaderLayout } from "../../component/header/header.component";
 import { ActivatedRoute } from '@angular/router';
 import dayjs from 'dayjs';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-editor',
@@ -30,7 +31,12 @@ export class EditorPage implements OnInit, OnDestroy {
     ['align_left', 'align_center', 'align_right', 'align_justify'],
   ];
 
-  constructor(private route: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object, private cdr: ChangeDetectorRef) {
+  constructor(
+    private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cdr: ChangeDetectorRef,
+    private cookieService: CookieService
+  ) {
     this.id = this.route.snapshot.paramMap.get('id');
   }
 
@@ -50,10 +56,10 @@ export class EditorPage implements OnInit, OnDestroy {
   }
 
   onChange = (e: any) => {
-    if(e?.target?.name === 'title') {
+    if (e?.target?.name === 'title') {
       this.title = e?.target?.value;
     }
-    if(e?.target?.name === 'keywords') {
+    if (e?.target?.name === 'keywords') {
       this.keywords = e?.target?.value;
     }
   }
@@ -81,6 +87,7 @@ export class EditorPage implements OnInit, OnDestroy {
 
   onSave = async () => {
     console.log(this.contents);
+    const accessToken = this.cookieService.get("x-access-token");
 
     const response = await fetch(
       `http://localhost:3000/api/posts${this.id ? `/${this.id}` : ''}`,
@@ -88,7 +95,7 @@ export class EditorPage implements OnInit, OnDestroy {
         method: this.id ? "PUT" : "POST",
         headers: {
           "Content-type": "application/json",
-          "Authentication": "Bearer "
+          "Authentication": `Bearer ${accessToken}`
         },
         body: JSON.stringify({
           _id: this.id ?? undefined,
