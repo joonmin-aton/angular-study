@@ -69,6 +69,7 @@ export class HeaderLayout implements OnInit, OnDestroy {
       email: json?.email,
       name: json?.name,
     }
+    this.localStorage.setItem("login-id", json?._id);
   }
 
   top5Keywords = async () => {
@@ -91,6 +92,6 @@ export class HeaderLayout implements OnInit, OnDestroy {
   }
 
   keywordClick = (keyword: any) => {
-    
+
   }
 }
