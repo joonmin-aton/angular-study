@@ -92,6 +92,7 @@ export class HeaderLayout implements OnInit, OnDestroy {
   }
 
   keywordClick = (keyword: any) => {
-
+    const blogId = this.localStorage.getItem("blog-id")
+    window.location.href = `/blog/${blogId}?page=1&keyword=${keyword._id}`
   }
 }

@@ -36,7 +36,6 @@ const updatePost = async (req: any, res: any) => {
             userId: claims.id,
             title, contents, keywords
         })
-        console.log(saved)
         res.status(200).json(saved);
     } catch (err) {
         res.status(500).json({ message: err });
@@ -55,8 +54,12 @@ const deletePost = async (req: any, res: any) => {
 
 const list = async (req: any, res: any) => {
     try {
-        const { id, page, size } = req?.body;
-        const list = await postSchema.find({ userId: id })
+        const { id, page, size, keyword } = req?.body;
+        let query: any = { userId: id };
+        if (keyword) {
+            query = { userId: id, keywords: { $in: keyword } }
+        }
+        const list = await postSchema.find({ ...query })
                                 .limit(size * 1)
                                 .skip((page - 1 ) * size)
                                 .sort({ createdAt: -1 });

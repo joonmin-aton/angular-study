@@ -59,9 +59,10 @@ export class BlogPage implements OnInit {
 
   load = async () => {
     const page = this.params['page'] ?? 1;
+    const keyword = this.params['keyword'] ?? undefined;
     const size = 5;
     const params: any = {
-      id: this.id, page, size
+      id: this.id, page, size, keyword
     }
     const response = await fetch(
       "http://localhost:3000/api/blog/list",
