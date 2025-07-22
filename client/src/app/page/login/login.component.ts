@@ -1,7 +1,8 @@
 import { Component } from "@angular/core";
-import { Location } from "@angular/common";
-import z from "zod";
 import { Router } from "@angular/router";
+import { CookieService } from 'ngx-cookie-service';
+import z from "zod";
+
 
 const LoginSchema = z.strictObject({
     email: z.email({ error: "올바른 이메일을 입력하세요" }),
@@ -11,13 +12,14 @@ const LoginSchema = z.strictObject({
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
+  providers:[ CookieService ]
 })
 export class LoginPage {
     public email: string = "";
     public password: string = "";
 
-    constructor(private router: Router) {}
+    constructor(private cookieService: CookieService) {}
 
     register = () => {
         window.location.href="register";
@@ -49,7 +51,9 @@ export class LoginPage {
             }
         )
 
-        const json = await response.json()
+        const json = await response.json();
+        this.cookieService.set("x-access-token", json?.data?.accessToken);
+        window.location.href = "/blog";
     }
 
     setEmail = (e: any) => {

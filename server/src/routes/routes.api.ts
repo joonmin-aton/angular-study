@@ -5,21 +5,24 @@ import postSchema from "../schema/schema.post.ts";
 import userSchema from "../schema/schema.user.ts";
 import AuthService from "../service/service.auth.ts";
 import { RestfulResource } from "../utils/node-restful.ts";
+import UserService from "../service/service.user.ts";
 
 export default (app: any, path: string) => {
     const router = express.Router();
     const API_AUTH = `${path}/auth`;
+    const API_USERS = `${path}/users`;
     const API_POSTS = `${path}/posts`;
 
     // 인증
     // CRUD
     const userResource = new RestfulResource<any>(userSchema);
-    userResource.serve(app, `${path}/users`);
+    userResource.serve(app, API_USERS);
+    router.get(`${path}/user/info`, UserService.info);
 
     const postResource = new RestfulResource<any>(postSchema);
-    postResource.before(['get', 'post', 'put', 'delete'], passport.authenticate('jwt'))
+    postResource.before(['post', 'put', 'delete'], passport.authenticate('jwt'))
     postResource.serve(app, API_POSTS);
-    router.post(`${API_POSTS}/list`, BlogService.list);
+    router.post(`${path}/blog/list`, BlogService.list);
 
 
     // 회원가입

@@ -51,7 +51,6 @@ const list = async (req: any, res: any) => {
         const curPage = page;
         const rowsPerPage = size;
         const pageSize = 5;        // 페이지네이션 길이
-        console.log((page-1) / pageSize);
         const totalPages = Math.ceil(totalCounts / size);
         const startPage = Math.floor((page-1) / pageSize) * pageSize + 1;
         let endPage = (Math.floor((page-1) / pageSize) + 1) * pageSize;

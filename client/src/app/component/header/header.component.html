@@ -1,13 +1,17 @@
 <div class="w-[240px] py-8 flex flex-col gap-8">
     <div class="font-bold text-2xl">jmpark's Blog</div>
     <div class="text-black/70 flex flex-col gap-2">
-        <a href="/login">로그인</a>
+        <a *ngIf="isLogin != true" href="/login">로그인</a>
+        <div *ngIf="isLogin == true">
+            <div><b><u>{{userData?.name}}</u></b>님 환영합니다.</div>
+            <a class="text-xs">로그아웃</a>
+        </div>
     </div>
     <div class="text-black/70 flex flex-col gap-2">
         <a class="block" href="/blog">블로그</a>
-        <a class="block" href="/editor">작성하기</a>
+        <a *ngIf="isLogin == true" class="block" href="/editor">작성하기</a>
         <div class="">
             <div>Top 5 Keyword</div>
-        </div>
+        </div>ß
     </div>
 </div>

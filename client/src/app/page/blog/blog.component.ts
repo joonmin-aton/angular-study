@@ -58,13 +58,11 @@ export class BlogPage implements OnInit, OnDestroy {
       page, size
     }
     const response = await fetch(
-      // "http://localhost:3000/api/posts?" + new URLSearchParams(params).toString(),
-      "http://localhost:3000/api/posts/list",
+      "http://localhost:3000/api/blog/list",
       {
         method: "POST",
         headers: {
           "Content-type": "application/json",
-          "Authentication": "Bearer "
         },
         body: JSON.stringify(params)
       }
