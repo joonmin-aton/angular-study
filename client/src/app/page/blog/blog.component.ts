@@ -52,7 +52,7 @@ export class BlogPage implements OnInit, OnDestroy {
   }
 
   load = async () => {
-    const page = this.params['page'];
+    const page = this.params['page'] ?? 1;
     const size = 5;
     const params: any = {
       page, size
