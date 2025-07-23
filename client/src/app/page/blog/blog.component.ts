@@ -1,10 +1,11 @@
 import { NgFor, NgIf } from "@angular/common";
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import dayjs from 'dayjs';
 import { HeaderLayout } from "../../component/header/header.component";
 import { DataService } from "../../service/service.data";
 import { environment } from "../../../environments/environment";
+import { combineLatest, map, Subscription } from "rxjs";
 
 @Component({
   selector: 'app-blog',
@@ -12,12 +13,14 @@ import { environment } from "../../../environments/environment";
   styleUrl: './blog.component.css',
   imports: [HeaderLayout, NgFor, NgIf]
 })
-export class BlogPage implements OnInit {
-  blogId: string;
+export class BlogPage implements OnInit, OnDestroy {
+  blogId: string = "";
   list: any[];
   pageable: any;
   pages: any[];
   params: any;
+
+  private subs: Subscription | undefined;
 
   constructor(
     private dataService: DataService,
@@ -25,7 +28,6 @@ export class BlogPage implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {
-    this.blogId = this.route.snapshot.paramMap.get('blogId') ?? "";
     this.list = [];
     this.pageable = [];
     this.pages = [];
@@ -33,10 +35,22 @@ export class BlogPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.params = params;
-      this.load();
-    });
+    this.subs = combineLatest([
+      this.route.paramMap,
+      this.route.queryParamMap
+    ])
+    .pipe(
+      map(([params, queryParams]: any) => {
+        const blogId = params.get('blogId') ?? "";
+        this.blogId = blogId;
+        this.params = queryParams;
+        this.load();
+      })
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.subs?.unsubscribe();
   }
 
   dateFormat = (date: any) => {
@@ -58,12 +72,13 @@ export class BlogPage implements OnInit {
   }
 
   load = async () => {
-    const page = this.params['page'] ?? 1;
-    const keyword = this.params['keyword'] ?? undefined;
+    const page = this.params?.page ?? 1;
+    const keyword = this.params?.keyword ?? undefined;
     const size = 5;
     const params: any = {
       id: this.blogId, page, size, keyword
     }
+    
     const response = await fetch(
       `${environment["API_HOST"]}/blog/list`,
       {

@@ -40,12 +40,23 @@ export class HeaderLayout implements OnInit, OnChanges {
       if (userInfo?._id === this.blogId) {
         this.isOwner = true;
       }
+      else {
+        this.isOwner = false;
+      }
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['blogId']) {
       const id = changes['blogId']?.currentValue;
+      this.blogId = id;
+      console.log(id);
+      if (this.userInfo?._id === id) {
+        this.isOwner = true;
+      }
+      else {
+        this.isOwner = false;
+      }
       this.loadBlog(id);
     }
   }
