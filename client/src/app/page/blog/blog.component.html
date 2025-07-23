@@ -1,9 +1,10 @@
 <div class="w-full min-h-screen flex justify-center">
-    <app-blog-header class="w-96 justify-end hidden md:flex bg-black/5"/>
+    <app-blog-header [blogId]="blogId" class="w-96 justify-end hidden md:flex bg-black/5"/>
     <div class="flex-grow w-full overflow-y">
         <div class="w-full py-8 px-4 flex flex-col gap-6">
             <div class="text-2xl font-bold">블로그</div>
             <div class="flex flex-col border-t-2 border-b-2 max-w-full md:w-[600px] w-full">
+                <div *ngIf="list.length == 0" class="py-12 text-center">블로그를 작성해주세요</div>
                 <div *ngFor="let item of list; index as i" class="py-2 border-b border-black/30 last:border-0">
                     <div class="flex items-center mb-2">
                         <a class="flex-grow cursor-pointer" (click)="rowClick(item)">{{item?.title}}</a>
@@ -17,7 +18,7 @@
                     </div>
                 </div>
             </div>
-            <div class="flex gap-2">
+            <div *ngIf="list.length > 0" class="flex gap-2">
                 <div *ngIf="pageable?.hasNext">이전</div>
                 <div *ngFor="let page of pages; index as i" class="cursor-pointer" (click)="pageClick(page)">
                     <div *ngIf="pageable?.curPage == page" class="font-bold rounded-md bg-blue-500/80 text-white px-3 py-1">{{page}}</div>

@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { NgIf } from "@angular/common";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HeaderLayout } from "../../component/header/header.component";
-import { LocalStorageService } from "../../service/localStorage";
-import { NgIf } from "@angular/common";
+import { DataService } from "../../service/service.data";
 
 @Component({
   selector: 'app-post',
@@ -10,37 +10,38 @@ import { NgIf } from "@angular/common";
   styleUrl: './post.component.css',
   imports: [HeaderLayout, NgIf]
 })
-export class PostPage implements OnInit, OnDestroy {
-  blogId: string | null;
-  postId: string | null;
+export class PostPage implements OnInit {
+  blogId: string;
+  postId: string;
+
   isOwner: boolean;
   data: any;
+
   constructor(
+    private dataService: DataService,
     private route: ActivatedRoute,
+    private router: Router,
     private cdr: ChangeDetectorRef,
-    private localStorage: LocalStorageService
   ) {
-    this.blogId = this.route.snapshot.paramMap.get('blogId');
-    this.postId = this.route.snapshot.paramMap.get('postId');
-    
-    if (this.localStorage.getItem("login-id") === this.blogId) {
-      this.isOwner = true;
-    }
-    else {
-      this.isOwner = false;
-    }
+    this.blogId = this.route.snapshot.paramMap.get('blogId') ?? "";
+    this.postId = this.route.snapshot.paramMap.get('postId') ?? "";
+    this.isOwner = false;
 
     this.load();
+
+    if (this.dataService?.userInfo?._id === this.blogId) {
+      this.isOwner = true;
+    }
   }
 
   ngOnInit(): void {
     setTimeout(() => {
       this.load();
     }, 1);
-  }
 
-  ngOnDestroy(): void {
-    throw new Error("Method not implemented.");
+    this.dataService.userInfo$.subscribe(user => {
+      console.log(user);
+    })
   }
 
   load = async () => {
@@ -62,7 +63,7 @@ export class PostPage implements OnInit, OnDestroy {
   }
 
   onEdit = async () => {
-    window.location.href=`/blog/${this.blogId}/editor/${this.postId}`;
+    this.router.navigateByUrl(`/blog/${this.blogId}/editor/${this.postId}`);
   }
 
   onDelete = async () => {

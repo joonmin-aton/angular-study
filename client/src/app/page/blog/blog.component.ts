@@ -1,42 +1,42 @@
-import { isPlatformBrowser, NgFor, NgIf } from "@angular/common";
-import { AfterViewInit, ChangeDetectorRef, Component, DoCheck, DOCUMENT, Inject, NgZone, OnDestroy, OnInit, PLATFORM_ID } from "@angular/core";
+import { NgFor, NgIf } from "@angular/common";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import dayjs from 'dayjs';
 import { HeaderLayout } from "../../component/header/header.component";
-import { LocalStorageService } from "../../service/localStorage";
+import { DataService } from "../../service/service.data";
 
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
   styleUrl: './blog.component.css',
-  providers: [LocalStorageService],
+  providers: [DataService],
   imports: [HeaderLayout, NgFor, NgIf]
 })
 export class BlogPage implements OnInit {
-  id: string | null;
+  blogId: string;
   list: any[];
   pageable: any;
   pages: any[];
   params: any;
 
   constructor(
+    private dataService: DataService,
     private route: ActivatedRoute,
+    private router: Router,
     private cdr: ChangeDetectorRef,
-    private localStorage: LocalStorageService
   ) {
-    this.id = this.route.snapshot.paramMap.get('id');
+    this.blogId = this.route.snapshot.paramMap.get('blogId') ?? "";
     this.list = [];
     this.pageable = [];
     this.pages = [];
-
-    this.localStorage.setItem("blog-id", this.id);
+    this.dataService.blogId = this.blogId;
   }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.params = params;
+      this.load();
     });
-    this.load();
   }
 
   dateFormat = (date: any) => {
@@ -50,11 +50,11 @@ export class BlogPage implements OnInit {
   }
 
   rowClick = (item: any) => {
-    window.location.href = `blog/${this.id}/post/${item?._id}`;
+    this.router.navigateByUrl(`/blog/${this.blogId}/post/${item?._id}`);
   }
 
   pageClick = (page: any) => {
-    window.location.href = `/blog/${this.id}?page=${page}`;
+    this.router.navigateByUrl(`/blog/${this.blogId}?page=${page}`);
   }
 
   load = async () => {
@@ -62,7 +62,7 @@ export class BlogPage implements OnInit {
     const keyword = this.params['keyword'] ?? undefined;
     const size = 5;
     const params: any = {
-      id: this.id, page, size, keyword
+      id: this.blogId, page, size, keyword
     }
     const response = await fetch(
       "http://localhost:3000/api/blog/list",
@@ -78,6 +78,7 @@ export class BlogPage implements OnInit {
     const json = await response.json();
 
     this.pageable = json?.pageable ?? [];
+    this.pages = [];
     this.list = json?.list ?? [];
     this.list = this.list.map((item) => ({
       ...item,

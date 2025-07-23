@@ -20,7 +20,7 @@ export const routes: Routes = [
         component: RegisterPage,
     },
     {
-        path: 'blog/:id',
+        path: 'blog/:blogId',
         component: BlogPage,
     },
     {

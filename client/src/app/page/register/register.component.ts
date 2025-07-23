@@ -66,7 +66,7 @@ export class RegisterPage {
 
         if (response.ok) {
             alert("회원가입에 성공하였습니다.");
-            window.location.href="login";
+            this.router.navigateByUrl("/login");
         }
         else {
             alert("회원가입에 실패했습니다.");

@@ -1,45 +1,68 @@
 import { NgFor, NgIf } from "@angular/common";
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { CookieService } from "ngx-cookie-service";
-import { LocalStorageService } from "../../service/localStorage";
+import { DataService } from "../../service/service.data";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-blog-header',
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
-  providers: [CookieService, LocalStorageService],
+  providers: [CookieService, DataService],
   imports: [NgIf, NgFor]
 })
-export class HeaderLayout implements OnInit, OnDestroy {
+export class HeaderLayout implements OnInit, OnChanges {
+  @Input() blogId: string = '';
   isLogin: boolean = false;
-  userData: any;
+
   keywords: any;
+  blogInfo?: any;
+  userInfo?: any;
 
   constructor(
     private cookieService: CookieService,
-    private localStorage: LocalStorageService,
-    private cdr: ChangeDetectorRef
+		private dataService: DataService,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {
     const accessToken = this.cookieService.get("x-access-token");
     if (accessToken) this.isLogin = true;
     this.load();
     this.keywords = [];
   }
+
   ngOnInit(): void {
+    this.dataService.userInfo$?.subscribe(userInfo => {
+      this.userInfo = userInfo;
+    });
   }
-  ngOnDestroy(): void {
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['blogId']) {
+      const id = changes['blogId']?.currentValue;
+      this.loadBlog(id);
+    }
   }
 
   load = async () => {
     if (this.isLogin) {
-      await this.userInfo();
+      await this.loadUserInfo();
     }
-    await this.top5Keywords();
     this.cdr.markForCheck();
   }
 
+  loadBlog = async (id: any) => {
+    await this.loadBlogInfo(id);
+    await this.loadTop5Keywords(id);
+    this.cdr.markForCheck();
+  }
+
+  login = () => {
+    this.router.navigateByUrl(`/login?from=${window.location.pathname}`);
+  }
+
   logout = () => {
-    if(confirm("로그아웃 하시겠습니까?")) {
+    if (confirm("로그아웃 하시겠습니까?")) {
       this.cookieService.delete("x-access-token", "/");
       this.cdr.markForCheck();
       window.location.reload();
@@ -47,11 +70,10 @@ export class HeaderLayout implements OnInit, OnDestroy {
   }
 
   link = (path?: string) => {
-    const blogId = this.localStorage.getItem("blog-id");
-    window.location.href = `/blog/${blogId}${path ?? ""}`
+    this.router.navigateByUrl(`/blog/${this.blogId}${path ?? ""}`);
   }
 
-  userInfo = async () => {
+  loadUserInfo = async () => {
     const accessToken = this.cookieService.get("x-access-token");
     const response = await fetch(
       `http://localhost:3000/api/user/info`,
@@ -65,15 +87,26 @@ export class HeaderLayout implements OnInit, OnDestroy {
     );
 
     const json = await response.json();
-    this.userData = {
-      email: json?.email,
-      name: json?.name,
-    }
-    this.localStorage.setItem("login-id", json?._id);
+    this.userInfo = json;
+    this.dataService.setUserInfo(this.userInfo);
   }
 
-  top5Keywords = async () => {
-    const blogId = this.localStorage.getItem("blog-id")
+  loadBlogInfo = async (id: any) => {
+    const response = await fetch(
+      `http://localhost:3000/api/users?_id=${id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+        },
+      }
+    );
+
+    const json = await response.json();
+    this.blogInfo = json?.[0];
+  }
+
+  loadTop5Keywords = async (id: any) => {
     const response = await fetch(
       `http://localhost:3000/api/blog/top5`,
       {
@@ -81,9 +114,7 @@ export class HeaderLayout implements OnInit, OnDestroy {
         headers: {
           "Content-type": "application/json"
         },
-        body: JSON.stringify({
-          id: blogId
-        })
+        body: JSON.stringify({ id })
       }
     );
 
@@ -92,7 +123,6 @@ export class HeaderLayout implements OnInit, OnDestroy {
   }
 
   keywordClick = (keyword: any) => {
-    const blogId = this.localStorage.getItem("blog-id")
-    window.location.href = `/blog/${blogId}?page=1&keyword=${keyword._id}`
+    this.router.navigateByUrl(`/blog/${this.blogId}?page=1&keyword=${keyword._id}`);
   }
 }

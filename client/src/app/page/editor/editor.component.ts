@@ -1,11 +1,11 @@
 import { isPlatformBrowser, NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnChanges, OnDestroy, OnInit, PLATFORM_ID, SimpleChanges } from "@angular/core";
+import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from "@angular/core";
 import { FormsModule } from '@angular/forms';
-import { Editor, NgxEditorComponent, NgxEditorMenuComponent, toHTML, Toolbar } from 'ngx-editor';
-import { HeaderLayout } from "../../component/header/header.component";
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import dayjs from 'dayjs';
 import { CookieService } from 'ngx-cookie-service';
+import { Editor, NgxEditorComponent, NgxEditorMenuComponent, Toolbar } from 'ngx-editor';
+import { HeaderLayout } from "../../component/header/header.component";
 
 @Component({
   selector: 'app-editor',
@@ -15,7 +15,7 @@ import { CookieService } from 'ngx-cookie-service';
   imports: [NgIf, HeaderLayout, NgxEditorComponent, NgxEditorMenuComponent, FormsModule],
 })
 export class EditorPage implements OnInit, OnDestroy {
-  blogId: string | null;
+  blogId: string;
   id: string | null;
   pageTitle: any = '포스트 작성';
   title: any = '';
@@ -34,12 +34,13 @@ export class EditorPage implements OnInit, OnDestroy {
   ];
 
   constructor(
+    private cookieService: CookieService,
     private route: ActivatedRoute,
-    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router,
     private cdr: ChangeDetectorRef,
-    private cookieService: CookieService
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {
-    this.blogId = this.route.snapshot.paramMap.get('blogId');
+    this.blogId = this.route.snapshot.paramMap.get('blogId') ?? "";
     this.id = this.route.snapshot.paramMap.get('id');
     if (this.id) {
       this.pageTitle = "포스트 수정";
@@ -56,7 +57,7 @@ export class EditorPage implements OnInit, OnDestroy {
         }
       }
       else {
-        window.location.href = `/blog/${this.blogId}`;
+        this.router.navigateByUrl(`/blog/${this.blogId}`);
       }
     }
   }
@@ -94,10 +95,7 @@ export class EditorPage implements OnInit, OnDestroy {
   }
 
   onSave = async () => {
-    console.log(this.contents);
     const accessToken = this.cookieService.get("x-access-token");
-    console.log(this.blogId);
-    console.log(accessToken);
 
     const response = await fetch(
       `http://localhost:3000/api/blog/${this.id ? "update" : "write"}`,
@@ -120,7 +118,7 @@ export class EditorPage implements OnInit, OnDestroy {
     const json = await response.json()
     if (response.status === 201 || response.status === 200) {
       alert(this.id ? "수정이 완료되었습니다." : "작성이 완료되었습니다.");
-      window.location.href = `/blog/${this.blogId}`;
+      this.router.navigateByUrl(`/blog/${this.blogId}`);
     }
   }
 
