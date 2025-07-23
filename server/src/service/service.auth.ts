@@ -31,6 +31,7 @@ const signIn = (req: any, res: any) => {
                     code: "0000",
                     message: "success",
                     data: {
+                        id: user?.id,
                         accessToken: jwt.sign({
                             id: user?.id,
                         }, JWT_SECRET_KEY, {

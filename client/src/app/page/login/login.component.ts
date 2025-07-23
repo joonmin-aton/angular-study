@@ -71,7 +71,12 @@ export class LoginPage implements OnInit {
 			if (json?.data?.accessToken) {
 				this.cookieService.set("x-access-token", json?.data?.accessToken, { path: "/" });
 				const from = this.params.from;
-				this.router.navigateByUrl(from);
+				if (from) {
+					this.router.navigateByUrl(from);
+				}
+				else {
+					this.router.navigateByUrl(`/blog/${json?.data?.id}`)
+				}
 			}
 			else {
 				alert("다시 시도해주세요");
