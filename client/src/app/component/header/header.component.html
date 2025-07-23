@@ -4,13 +4,13 @@
         <div *ngIf="isLogin != true" class="cursor-pointer" (click)="login()">로그인</div>
         <div *ngIf="isLogin == true" class="flex flex-col gap-2">
             <div><b><u>{{userInfo?.name}}</u></b>님 환영합니다.</div>
-            <div class="text-xs cursor-pointer" (click)="link()">내 블로그로 가기</div>
+            <div *ngIf="isOwner != true" class="text-xs cursor-pointer" (click)="goToMyBlog()">내 블로그로 가기</div>
+            <div *ngIf="isOwner == true" class="text-xs cursor-pointer" (click)="link('/editor')">작성하기</div>
             <div class="text-xs cursor-pointer" (click)="logout()">로그아웃</div>
         </div>
     </div>
     <ul class="text-black/70 flex flex-col gap-2 list-disc">
         <li class="block cursor-pointer" (click)="link()">블로그</li>
-        <li *ngIf="isLogin == true" class="block cursor-pointer" (click)="link('/editor')">작성하기</li>
     </ul>
     <div class="flex flex-col gap-2">
         <div class="font-bold">Top 5 Keyword</div>

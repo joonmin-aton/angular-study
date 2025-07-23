@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Editor, NgxEditorComponent, NgxEditorMenuComponent, Toolbar } from 'ngx-editor';
 import { HeaderLayout } from "../../component/header/header.component";
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-editor',
@@ -76,7 +77,7 @@ export class EditorPage implements OnInit, OnDestroy {
 
   load = async () => {
     const response = await fetch(
-      `http://localhost:3000/api/posts?_id=${this.id}`,
+      `${environment["API_HOST"]}/posts?_id=${this.id}`,
       {
         method: "GET",
         headers: {
@@ -98,7 +99,7 @@ export class EditorPage implements OnInit, OnDestroy {
     const accessToken = this.cookieService.get("x-access-token");
 
     const response = await fetch(
-      `http://localhost:3000/api/blog/${this.id ? "update" : "write"}`,
+      `${environment["API_HOST"]}/blog/${this.id ? "update" : "write"}`,
       {
         method: this.id ? "PUT" : "POST",
         headers: {

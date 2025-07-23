@@ -3,17 +3,20 @@ import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges }
 import { CookieService } from "ngx-cookie-service";
 import { DataService } from "../../service/service.data";
 import { Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: 'app-blog-header',
+  standalone: true,
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
-  providers: [CookieService, DataService],
+  providers: [CookieService],
   imports: [NgIf, NgFor]
 })
 export class HeaderLayout implements OnInit, OnChanges {
   @Input() blogId: string = '';
   isLogin: boolean = false;
+  isOwner: boolean = false;
 
   keywords: any;
   blogInfo?: any;
@@ -21,7 +24,7 @@ export class HeaderLayout implements OnInit, OnChanges {
 
   constructor(
     private cookieService: CookieService,
-		private dataService: DataService,
+    private dataService: DataService,
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {
@@ -34,6 +37,9 @@ export class HeaderLayout implements OnInit, OnChanges {
   ngOnInit(): void {
     this.dataService.userInfo$?.subscribe(userInfo => {
       this.userInfo = userInfo;
+      if (userInfo?._id === this.blogId) {
+        this.isOwner = true;
+      }
     });
   }
 
@@ -48,13 +54,13 @@ export class HeaderLayout implements OnInit, OnChanges {
     if (this.isLogin) {
       await this.loadUserInfo();
     }
-    this.cdr.markForCheck();
+    this.cdr?.markForCheck();
   }
 
   loadBlog = async (id: any) => {
     await this.loadBlogInfo(id);
     await this.loadTop5Keywords(id);
-    this.cdr.markForCheck();
+    this.cdr?.markForCheck();
   }
 
   login = () => {
@@ -64,7 +70,7 @@ export class HeaderLayout implements OnInit, OnChanges {
   logout = () => {
     if (confirm("로그아웃 하시겠습니까?")) {
       this.cookieService.delete("x-access-token", "/");
-      this.cdr.markForCheck();
+      this.cdr?.markForCheck();
       window.location.reload();
     }
   }
@@ -73,10 +79,15 @@ export class HeaderLayout implements OnInit, OnChanges {
     this.router.navigateByUrl(`/blog/${this.blogId}${path ?? ""}`);
   }
 
+  goToMyBlog = () => {
+    this.router.navigateByUrl(`/blog/${this.userInfo._id}`);
+    this.cdr?.markForCheck();
+  }
+
   loadUserInfo = async () => {
     const accessToken = this.cookieService.get("x-access-token");
     const response = await fetch(
-      `http://localhost:3000/api/user/info`,
+      `${environment["API_HOST"]}/user/info`,
       {
         method: "GET",
         headers: {
@@ -88,12 +99,12 @@ export class HeaderLayout implements OnInit, OnChanges {
 
     const json = await response.json();
     this.userInfo = json;
-    this.dataService.setUserInfo(this.userInfo);
+    this.dataService?.setUserInfo(this.userInfo);
   }
 
   loadBlogInfo = async (id: any) => {
     const response = await fetch(
-      `http://localhost:3000/api/users?_id=${id}`,
+      `${environment["API_HOST"]}/users?_id=${id}`,
       {
         method: "GET",
         headers: {
@@ -108,7 +119,7 @@ export class HeaderLayout implements OnInit, OnChanges {
 
   loadTop5Keywords = async (id: any) => {
     const response = await fetch(
-      `http://localhost:3000/api/blog/top5`,
+      `${environment["API_HOST"]}/blog/top5`,
       {
         method: "POST",
         headers: {

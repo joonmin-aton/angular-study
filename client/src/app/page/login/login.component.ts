@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CookieService } from 'ngx-cookie-service';
 import z from "zod";
+import { environment } from "../../../environments/environment";
 
 
 const LoginSchema = z.strictObject({
@@ -51,7 +52,7 @@ export class LoginPage implements OnInit {
 		}
 
 		const response = await fetch(
-			"http://localhost:3000/api/auth/signIn",
+			`${environment["API_HOST"]}/auth/signIn`,
 			{
 				method: "POST",
 				headers: {

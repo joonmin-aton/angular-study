@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HeaderLayout } from "../../component/header/header.component";
 import { DataService } from "../../service/service.data";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: 'app-post',
@@ -28,25 +29,20 @@ export class PostPage implements OnInit {
     this.isOwner = false;
 
     this.load();
-
-    if (this.dataService?.userInfo?._id === this.blogId) {
-      this.isOwner = true;
-    }
   }
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.load();
-    }, 1);
-
-    this.dataService.userInfo$.subscribe(user => {
-      console.log(user);
+    this.load();
+    this.dataService.userInfo$.subscribe(userInfo => {
+      if (userInfo?._id === this.blogId) {
+        this.isOwner = true;
+      }
     })
   }
 
   load = async () => {
     const response = await fetch(
-      `http://localhost:3000/api/posts?_id=${this.postId}`,
+      `${environment["API_HOST"]}/posts?_id=${this.postId}`,
       {
         method: "GET",
         headers: {
@@ -68,7 +64,7 @@ export class PostPage implements OnInit {
 
   onDelete = async () => {
     const response = await fetch(
-      `http://localhost:3000/api/posts/${this.postId}`,
+      `${environment["API_HOST"]}/posts/${this.postId}`,
       {
         method: "DELETE",
         headers: {

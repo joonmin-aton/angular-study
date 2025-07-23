@@ -4,12 +4,12 @@ import { ActivatedRoute, Router } from "@angular/router";
 import dayjs from 'dayjs';
 import { HeaderLayout } from "../../component/header/header.component";
 import { DataService } from "../../service/service.data";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
   styleUrl: './blog.component.css',
-  providers: [DataService],
   imports: [HeaderLayout, NgFor, NgIf]
 })
 export class BlogPage implements OnInit {
@@ -65,7 +65,7 @@ export class BlogPage implements OnInit {
       id: this.blogId, page, size, keyword
     }
     const response = await fetch(
-      "http://localhost:3000/api/blog/list",
+      `${environment["API_HOST"]}/blog/list`,
       {
         method: "POST",
         headers: {

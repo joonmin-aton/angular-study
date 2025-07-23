@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { Location } from "@angular/common";
 import z from "zod";
 import { Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
 
 const RegisterSchema = z.strictObject({
     email: z.email({ error: "올바른 이메일을 입력하세요" }),
@@ -50,7 +51,7 @@ export class RegisterPage {
         }
         
         const response = await fetch(
-            "http://localhost:3000/api/auth/register",
+            `${environment["API_HOST"]}/auth/register`,
             {
                 method: "POST",
                 headers: {

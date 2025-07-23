@@ -125,7 +125,7 @@ const top5Keywords = async (req: any, res: any) => {
                     }
                 }
             },
-            { $sort: { count: -1 } },
+            { $sort: { count: -1, _id: 1 } },
             { $limit: 5 }
         ]);
         res.status(200).json(exist);
