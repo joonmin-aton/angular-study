@@ -43,7 +43,7 @@ export class BlogPage implements OnInit, OnDestroy {
       map(([params, queryParams]: any) => {
         const blogId = params.get('blogId') ?? "";
         this.blogId = blogId;
-        this.params = queryParams;
+        this.params = queryParams?.params;
         this.load();
       })
     ).subscribe();
@@ -72,13 +72,14 @@ export class BlogPage implements OnInit, OnDestroy {
   }
 
   load = async () => {
+    console.log(this.params);
     const page = this.params?.page ?? 1;
     const keyword = this.params?.keyword ?? undefined;
     const size = 5;
     const params: any = {
       id: this.blogId, page, size, keyword
     }
-    
+
     const response = await fetch(
       `${environment["API_HOST"]}/blog/list`,
       {
