@@ -64,7 +64,7 @@ const list = async (req: any, res: any) => {
                                 .skip((page - 1 ) * size)
                                 .sort({ createdAt: -1 });
 
-        const totalCounts : number = await postSchema.countDocuments();
+        const totalCounts : number = await postSchema.countDocuments({ ...query });
         const curPage = page;
         const rowsPerPage = size;
         const pageSize = 5;        // 페이지네이션 길이
