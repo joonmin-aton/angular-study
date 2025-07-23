@@ -14,7 +14,7 @@
     </ul>
     <div class="flex flex-col gap-2">
         <div class="font-bold">Top 5 Keyword</div>
-        <div class="flex gap-1">
+        <div class="flex gap-1 flex-wrap">
             <div *ngFor="let keyword of keywords" class="rounded-xl border border-black/30 bg-white px-1.5 py-0.5 text-sm cursor-pointer" (click)="keywordClick(keyword)">{{keyword._id}}</div>
         </div>
     </div>
