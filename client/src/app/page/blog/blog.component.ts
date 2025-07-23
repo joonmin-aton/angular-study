@@ -72,7 +72,6 @@ export class BlogPage implements OnInit, OnDestroy {
   }
 
   load = async () => {
-    console.log(this.params);
     const page = this.params?.page ?? 1;
     const keyword = this.params?.keyword ?? undefined;
     const size = 5;

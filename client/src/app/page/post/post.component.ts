@@ -63,17 +63,20 @@ export class PostPage implements OnInit {
   }
 
   onDelete = async () => {
-    const response = await fetch(
-      `${environment["API_HOST"]}/posts/${this.postId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-type": "application/json",
-          "Authentication": "Bearer "
+    if (confirm("정말 삭제하시겠습니까?")) {
+      const response = await fetch(
+        `${environment["API_HOST"]}/posts/${this.postId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-type": "application/json",
+            "Authentication": "Bearer "
+          }
         }
-      }
-    )
+      )
 
-    const json = await response.json();
+      await response.json();
+      this.router.navigateByUrl(`/blog/${this.blogId}`);
+    }
   }
 }
