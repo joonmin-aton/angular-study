@@ -12,12 +12,12 @@ export const JWT_SECRET_KEY = "secretJMPark";
 
 export default () => {
 	passport.serializeUser((user: any, done) => {
-    done(null, user);
-  });
+		done(null, user);
+	});
 
-  passport.deserializeUser((user: any, done) => {
-    done(null, user);
-  });
+	passport.deserializeUser((user: any, done) => {
+		done(null, user);
+	});
 
 	passport.use(new LocalStrategy(
 		{
